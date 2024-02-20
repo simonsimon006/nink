@@ -1,55 +1,78 @@
-/* main.rs
- *
- * Copyright 2023 Unknown
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
-
-mod application;
-mod config;
-mod window;
-
-use self::application::NinkApplication;
-use self::window::NinkWindow;
-
-use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
-use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
-use gtk::{gio, glib};
 use gtk::prelude::*;
+use relm4::prelude::*;
 
-fn main() -> glib::ExitCode {
-    // Set up gettext translations
-    bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
-    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8")
-        .expect("Unable to set the text domain encoding");
-    textdomain(GETTEXT_PACKAGE).expect("Unable to switch to the text domain");
+struct App {
+    counter: u8,
+    msg: (),
+}
 
-    // Load resources
-    let resources = gio::Resource::load(PKGDATADIR.to_owned() + "/nink.gresource")
-        .expect("Could not load resources");
-    gio::resources_register(&resources);
+#[derive(Debug, Clone)]
+enum Msg {
+    Event,
+    Increment,
+    Decrement,
+}
 
-    // Create a new GtkApplication. The application manages our main loop,
-    // application windows, integration with the window manager/compositor, and
-    // desktop features such as file opening and single-instance applications.
-    let app = NinkApplication::new("de.simongrunwald.nink", &gio::ApplicationFlags::empty());
+#[relm4::component]
+impl SimpleComponent for App {
+    type Init = u8;
+    type Input = Msg;
+    type Output = ();
 
-    // Run the application. This function will block until the application
-    // exits. Upon return, we have our exit code to return to the shell. (This
-    // is the code you see when you do `echo $?` after running a command in a
-    // terminal.
-    app.run()
+    view! {
+        gtk::Window {
+            set_title: Some("Simple App"),
+            set_default_size: (300, 100),
+
+            gtk::Box {
+                set_orientation: gtk::Orientation::Vertical,
+                set_spacing: 5,
+                set_margin_all: 5,
+
+                gtk::Button {
+                    set_label: "Increment",
+                    connect_clicked => Msg::Increment,
+                },
+
+                gtk::Button {
+                    set_label: "Decrement",
+                    connect_clicked => Msg::Decrement,
+                },
+
+                gtk::Label {
+                    #[watch]
+                    set_label: &format!["Counter: {}", model.counter],
+                    set_margin_all: 5,
+                }
+            }
+        }
+    }
+
+    fn init(
+        counter: Self::Init,
+        root: &Self::Root,
+        sender: ComponentSender<Self>,
+    ) -> ComponentParts<Self> {
+        let model = App { counter, msg: () };
+
+        let widgets = view_output![];
+
+        ComponentParts { model, widgets }
+    }
+
+    fn update(&mut self, msg: Self::Input, _sender: ComponentSender<Self>) {
+        match msg {
+            Msg::Increment => {
+                self.counter = self.counter.wrapping_add(1);
+            }
+            Msg::Decrement => {
+                self.counter = self.counter.wrapping_sub(1);
+            }
+            Msg::Event => {}
+        }
+    }
+}
+fn main() {
+    let app = RelmApp::new("relm4.example.simple");
+    app.run::<App>(0);
 }

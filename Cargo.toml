@@ -4,10 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-gettext-rs = { version = "0.7", features = ["gettext-system"] }
-gtk = { version = "0.7", package = "gtk4" }
-
-[dependencies.adw]
-package = "libadwaita"
-version = "0.5"
-features = ["v1_4"]
+# Core library
+relm4 = "0.6.2"
+# Optional: reusable components
+relm4-components = "0.6.2"
+# Optional: icons
+relm4-icons = { version = "0.6.0", features = ["plus"] }

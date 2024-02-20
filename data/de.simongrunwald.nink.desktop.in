@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=nink
-Exec=nink
-Icon=de.simongrunwald.nink
-Terminal=false
-Type=Application
-Categories=GTK;
-StartupNotify=true
