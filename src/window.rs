@@ -19,18 +19,18 @@
  */
 
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
+use adw::subclass::prelude::*;
 use gtk::{gio, glib};
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/org/gnome/Example/window.ui")]
+    #[template(resource = "/de/simongrunwald/nink/window.ui")]
     pub struct NinkWindow {
         // Template widgets
         #[template_child]
-        pub header_bar: TemplateChild<gtk::HeaderBar>,
+        pub header_bar: TemplateChild<adw::HeaderBar>,
         #[template_child]
         pub label: TemplateChild<gtk::Label>,
     }
@@ -39,7 +39,7 @@ mod imp {
     impl ObjectSubclass for NinkWindow {
         const NAME: &'static str = "NinkWindow";
         type Type = super::NinkWindow;
-        type ParentType = gtk::ApplicationWindow;
+        type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
@@ -54,11 +54,12 @@ mod imp {
     impl WidgetImpl for NinkWindow {}
     impl WindowImpl for NinkWindow {}
     impl ApplicationWindowImpl for NinkWindow {}
+    impl AdwApplicationWindowImpl for NinkWindow {}
 }
 
 glib::wrapper! {
     pub struct NinkWindow(ObjectSubclass<imp::NinkWindow>)
-        @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow,        @implements gio::ActionGroup, gio::ActionMap;
+        @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,        @implements gio::ActionGroup, gio::ActionMap;
 }
 
 impl NinkWindow {

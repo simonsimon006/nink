@@ -19,7 +19,7 @@
  */
 
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
+use adw::subclass::prelude::*;
 use gtk::{gio, glib};
 
 use crate::config::VERSION;
@@ -35,7 +35,7 @@ mod imp {
     impl ObjectSubclass for NinkApplication {
         const NAME: &'static str = "NinkApplication";
         type Type = super::NinkApplication;
-        type ParentType = gtk::Application;
+        type ParentType = adw::Application;
     }
 
     impl ObjectImpl for NinkApplication {
@@ -68,11 +68,12 @@ mod imp {
     }
 
     impl GtkApplicationImpl for NinkApplication {}
-    }
+    impl AdwApplicationImpl for NinkApplication {}
+}
 
 glib::wrapper! {
     pub struct NinkApplication(ObjectSubclass<imp::NinkApplication>)
-        @extends gio::Application, gtk::Application, 
+        @extends gio::Application, gtk::Application, adw::Application,
         @implements gio::ActionGroup, gio::ActionMap;
 }
 
@@ -96,14 +97,14 @@ impl NinkApplication {
 
     fn show_about(&self) {
         let window = self.active_window().unwrap();
-        let about = gtk::AboutDialog::builder()
+        let about = adw::AboutWindow::builder()
             .transient_for(&window)
-            .modal(true)
-            .program_name("nink")
-            .logo_icon_name("org.gnome.Example")
+            .application_name("nink")
+            .application_icon("de.simongrunwald.nink")
+            .developer_name("Simon Grunwald")
             .version(VERSION)
-            .authors(vec!["Unknown"])
-            .copyright("© 2023 Unknown")
+            .developers(vec!["Simon Grunwald"])
+            .copyright("© 2023 Simon Grunwald")
             .build();
 
         about.present();

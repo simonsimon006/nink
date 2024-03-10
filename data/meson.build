@@ -1,6 +1,6 @@
 desktop_file = i18n.merge_file(
-        input: 'org.gnome.Example.desktop.in',
-       output: 'org.gnome.Example.desktop',
+        input: 'de.simongrunwald.nink.desktop.in',
+       output: 'de.simongrunwald.nink.desktop',
          type: 'desktop',
        po_dir: '../po',
       install: true,
@@ -13,8 +13,8 @@ if desktop_utils.found()
 endif
 
 appstream_file = i18n.merge_file(
-        input: 'org.gnome.Example.metainfo.xml.in',
-       output: 'org.gnome.Example.metainfo.xml',
+        input: 'de.simongrunwald.nink.metainfo.xml.in',
+       output: 'de.simongrunwald.nink.metainfo.xml',
        po_dir: '../po',
       install: true,
   install_dir: get_option('datadir') / 'metainfo'
@@ -24,7 +24,7 @@ appstreamcli = find_program('appstreamcli', required: false, disabler: true)
 test('Validate appstream file', appstreamcli,
      args: ['validate', '--no-net', '--explain', appstream_file])
 
-install_data('org.gnome.Example.gschema.xml',
+install_data('de.simongrunwald.nink.gschema.xml',
   install_dir: get_option('datadir') / 'glib-2.0' / 'schemas'
 )
 
